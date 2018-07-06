@@ -1,0 +1,20 @@
+[
+	{"category": "EMS"
+		"cmdList": 
+		[
+			{"system":"EMS", "cmd": "RTRV-HDR", "format":"RTRV-HDR:[<tid>]::[<ctag>];crlf"},
+		],
+	},
+	{"category": "ADMIN"
+		"cmdList": 
+		[
+			{"system":"ALL", "cmd": "INT-FACTORY", "format":"NIT-FACTORY:<tid>::[<ctag>]:PWD=<password>[,SH=<sh>];crlf",},
+		],
+	},
+	{"category": "PM"
+		"cmdList": 
+		[
+			{"system":"ALL", "cmd": "INT-PM", "format":"INIT-PM:<tid>:[<aid>]:[<ctag>]:SIGNAL=<signal>,TYPE=<type>;crlf"},
+		],
+	},
+]
