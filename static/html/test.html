@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      .cmdResultView{ width: 100%; height: 100%;}
+      .cmdBox{width:80%;}
+      .sendBtn{width:10%;}
+    </style>
+  </head>
+  <body>
+    <form id="cmdBox">
+        <input id="cmdReq" class="cmdBox" type="text">
+        <input id="sendBtn" class="sendBtn" type="submit" value="SEND">
+    </form>
+    <div>      
+      <textarea id="cmdResultView" class="cmdResultView" readonly rows="50"></textarea>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var socket = io();
+      $('#cmdBox').on('submit', function(e){
+          socket.emit('reqCmd', $('#cmdReq').val());
+          $('#cmdResultView').append($('#cmdReq').val()+'\n');
+          $('#cmdReq').val("");
+          e.preventDefault();
+      });
+      socket.on('resCmd', function(msg){
+        console.log(msg);
+        $('#cmdResultView').append(msg+'\n');
+        $('#cmdResultView').append('\n\n');
+        $('#cmdResultView').scrollTop($('#cmdResultView')[0].scrollHeight);
+      });
+    </script>
+  </body>
+</html>
