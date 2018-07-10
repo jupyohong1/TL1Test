@@ -80,18 +80,18 @@ sock.prototype.connect = function() {
 sock[${this.name}] connect succes, server: ${this.ip}:${this.port}`);
   });
 
-  this.client.on('data', (data) => {
+  this.client.on('data', (data) => {    
     this.isRecv = true;
     const strContent = new Buffer(data);
     const recvData = iconv.decode(strContent, 'euckr').toString();
-    const recvMsg = recvData.toString();
-    const recvTL1Data = new TL1_COMMON.GetRecvMsg();
+    const recvMsg = recvData.toString();        
+    const recvTL1Data = new TL1_COMMON.GetRecvMsg();    
     recvTL1Data.parseHdr(recvMsg);
     if (this.name == 'CMD') {
       this.dataMap.set(Number(recvTL1Data.ctag), recvTL1Data);
     } else {
       this.dataMap.set(Number(recvTL1Data.ctag), recvMsg);
-    }
+    }    
     logger.info(`sock[${this.name}] recv data!, ctag[${recvTL1Data.ctag}]`);
   });
 
@@ -167,7 +167,7 @@ sock.prototype.recv = async function(ctag, errCount) {
 
   if (error > 20) {
     const message = `\
-not found data, tid: ${tid}, ctag: ${ctag}, errCount: ${error}`;
+not found data, tid: ${tid}, ctag: ${ctag}, errCount: ${error}`;    
     return {result: false, data: null, msg: message};
   } else {
     await this.recv(ctag, error);

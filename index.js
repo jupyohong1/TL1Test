@@ -11,14 +11,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 // ems connect
 const emsPort = [6200, 6300];
- const emsIP = '127.0.0.1';
+ const emsIP = '192.168.135.251';
 
 
 // API
-app.use('/api', require('./routers/api/router'));
-
-// repPort
-app.use('/report', require('./routers/report'));
+app.use('/test', require('./routers/test.js'));
 
 // server
 const http = require('http').Server(app);
@@ -29,4 +26,4 @@ http.listen(port, function() {
 });
 
 socketMgr.createEMSSocket(emsIP, emsPort[0], emsPort[1]);
-socketMgr.repProc();
+socketMgr.reqProc();
