@@ -33,5 +33,5 @@ http.listen(port, function() {
 });
 
 socketMgr.createEMSSocket(emsIP, emsPort[0], emsPort[1]);
-// socketMgr.repProc();
+socketMgr.repProc();
 socketMgr.reqProc();

@@ -26,7 +26,7 @@ sockMgr.createWebSocket = function(http) {
 
 sockMgr.repProc = async function() {
   try {
-    while (sockMgr.repSock.getDataMapCount() > 0) {
+    while (sockMgr.repSock.getRecvDataCount() > 0) {
       let recvData = await sockMgr.repSock.recvRep();
       if (recvData == undefined) {
         recvData = await sockMgr.repSock.recvRep();
@@ -36,7 +36,7 @@ sockMgr.repProc = async function() {
         if (sockMgr.webSock.getClientCount() > 0) {
           sockMgr.webSock.send(recvData.data.value);
         }
-        sockMgr.repSock.deleteDataMap(recvData.data.key);
+        sockMgr.repSock.deleteRecvData(recvData.data.key);
       }
     }
   } catch (exception) {
@@ -66,6 +66,7 @@ sockMgr.reqProc = async function() {
             recvData = await sockMgr.cmdSock.recv(sendTL1.ctag, 0);
           }
           resMsg = recvData.data.recvMsg;
+          sockMgr.cmdSock.deleteRecvData(sendTL1.ctag);
         } else {
           resMsg = `TL1 send fail`;
           logger.warn(resMsg);

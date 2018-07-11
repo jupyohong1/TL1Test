@@ -4,6 +4,9 @@ const iconv = require('iconv-lite');
 const TL1_COMMON = require('../tl1/tl1_common');
 const net = require('net');
 
+let cmdDataMap = undefined;
+let repDataMap = undefined;
+
 /**
  * Create socket
  * @param {string} name socket name
@@ -17,6 +20,16 @@ function sock(name, ip, port) {
 
   this.client;
   this.isConn = false;
+
+  if (name == 'CMD') {
+    if (cmdDataMap == undefined) {
+      cmdDataMap = new Map();
+    }
+  } else if (name == 'REP') {
+    if (repDataMap == undefined) {
+      repDataMap = new Map();
+    }
+  }
 };
 
 sock.prototype = {
@@ -55,15 +68,15 @@ sock.prototype = {
 
   isRecv: false,
 
-  dataMap: new Map(),
-  deleteDataMap: function(key) {
-    if (this.dataMap.get(key) != undefined) {
-       this.dataMap.delete(key);
-    }
-  },
-  getDataMapCount: function() {
-    return this.dataMap.size;
-  },
+  // dataMap: new Map(),
+  // deleteDataMap: function(key) {
+  //   if (this.dataMap.get(key) != undefined) {
+  //      this.dataMap.delete(key);
+  //   }
+  // },
+  // getDataMapCount: function() {
+  //   return this.dataMap.size;
+  // },
 
   toString: function() {
     return `\
@@ -72,6 +85,40 @@ sock[${this.name}], ip[${this.ip}], port[${this.port}], conn[${this.isConn}]`;
 
   client: null,
   recvTL1Data: null,
+};
+
+sock.prototype.getRecvDataCount = function() {
+  if (this.name == 'CMD') {
+    return cmdDataMap.size;
+  } else if (this.name == 'REP') {
+    return repDataMap.size;
+  } else {
+    return -1;
+  }
+};
+
+sock.prototype.deleteRecvData = function(key) {
+  if (this.name == 'CMD') {
+    if (cmdDataMap.get(key) != undefined) {
+      cmdDataMap.delete(key);
+    }
+  } else if (this.name == 'REP') {
+    if (repDataMap.get(key) != undefined) {
+      repDataMap.delete(key);
+    }
+  }
+};
+
+sock.prototype.getRecvData = function() {
+  if (this.name == 'CMD') {
+    let itr = cmdDataMap.entries();
+    return itr.next().value;
+  } else if (this.name == 'REP') {
+    let itr = repDataMap.entries();
+    return itr.next().value;
+  } else {
+    return null;
+  }
 };
 
 sock.prototype.connect = function() {
@@ -104,10 +151,12 @@ sock[${this.name}] connect succes, server: ${this.ip}:${this.port}`);
     if (this.recvTL1Data.isRecvComplete) {
       this.recvTL1Data.parse();
       if (this.name == 'CMD') {
-        this.dataMap.set(Number(this.recvTL1Data.ctag), this.recvTL1Data);
+        // this.dataMap.set(Number(this.recvTL1Data.ctag), this.recvTL1Data);
+        cmdDataMap.set(Number(this.recvTL1Data.ctag), this.recvTL1Data);
       } else {
-        this.dataMap.set(
-          Number(this.recvTL1Data.ctag), this.recvTL1Data.recvMsg);
+        // this.dataMap.set(
+        //   Number(this.recvTL1Data.ctag), this.recvTL1Data.recvMsg);
+        repDataMap.set(Number(this.recvTL1Data.ctag), this.recvTL1Data.recvMsg);
       }
       logger.info(`\
 sock[${this.name}] recv data!, ctag[${this.recvTL1Data.ctag}]`);
@@ -153,17 +202,17 @@ send msg[${Number(ctag)}, ${msg.substr(0, msg.length-2)}], result: ${writeOk}`);
 sock.prototype._promise = function(ctag) {
   return new Promise(((resolve, reject) => {
     setTimeout(() => {
-      if (this.dataMap.size <= 0) {
+      if (cmdDataMap.size <= 0) {
         reject(new Error('Error'));
       } else {
-        const obj = this.dataMap.get(Number(ctag));
+        const obj = cmdDataMap.get(Number(ctag));
         if (obj == undefined) {
           reject(new Error('Error'));
         } else {
           resolve(obj);
         }
       }
-    }, 500);
+    }, 100);
   }));
 };
 
@@ -198,10 +247,10 @@ not found data, tid: ${tid}, ctag: ${ctag}, errCount: ${error}`;
 sock.prototype._promiseRep = function() {
   return new Promise(((resolve, reject) => {
     setTimeout(() => {
-      if (this.dataMap.size <= 0) {
+      if (repDataMap.size <= 0) {
         reject(new Error('Error'));
       } else {
-        this.dataMap.forEach( function(value, key) {
+        repDataMap.forEach( function(value, key) {
           if (value == undefined) {
             reject(new Error('Error'));
           } else {
