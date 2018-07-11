@@ -1,0 +1,8 @@
+<h1>Command List</h1>
+<ul>
+    <% cmdList.forEach(function(command) { %>        
+        <li onclick="setSyntax()">
+            <%= command.cmd %>
+        </li>        
+    <% }); %>
+</ul>
