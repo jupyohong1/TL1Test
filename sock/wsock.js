@@ -11,8 +11,8 @@ let wsDataMap = undefined;
 function wsock(http) {
   this.event = 'report';
   this.io = socketIO(http);
-  
-  if(wsDataMap == undefined) {
+
+  if (wsDataMap == undefined) {
     wsDataMap = new Map();
   }
 
@@ -22,9 +22,9 @@ function wsock(http) {
       logger.trace('webSocket disconnected');
     });
 
-    ws.on('reqCmd', function(msg){      
-      wsDataMap.set(ws.id, msg);      
-    })
+    ws.on('reqCmd', function(msg) {
+      wsDataMap.set(ws.id, msg);
+    });
   });
 };
 
@@ -45,7 +45,7 @@ wsock.prototype.getClientCount = function() {
 
 wsock.prototype.getRecvCmdCount = function() {
   return wsDataMap.size;
-}
+};
 
 wsock.prototype.deleteRecvCmd = function(key) {
   if (wsDataMap.get(key) != undefined) {
@@ -56,6 +56,6 @@ wsock.prototype.deleteRecvCmd = function(key) {
 wsock.prototype.getRecvCmd = function() {
   let itr = wsDataMap.entries();
   return itr.next().value;
-}
+};
 
 module.exports = wsock;
