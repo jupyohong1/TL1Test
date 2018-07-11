@@ -30,12 +30,12 @@ function wsock(http) {
 
 wsock.prototype.send = function(msg) {
   this.io.emit(this.event, msg);
-  logger.trace(`send report, msg: ${msg}`);
+  // logger.trace(`send report, msg: ${msg}`);
 };
 
 wsock.prototype.sendto = function(id, event, msg) {
   this.io.to(id).emit(event, msg);
-  logger.trace(`send to ${id}, event: ${event}, msg: ${msg}`);
+  // logger.trace(`send to ${id}, event: ${event}, msg: ${msg}`);
 };
 
 wsock.prototype.getClientCount = function() {

@@ -47,24 +47,24 @@ sockMgr.repProc = async function() {
 };
 
 sockMgr.reqProc = async function() {
-  try{
-    while (sockMgr.webSock.getRecvCmdCount() > 0) {      
+  try {
+    while (sockMgr.webSock.getRecvCmdCount() > 0) {
       let recvData = sockMgr.webSock.getRecvCmd();
       let sockId = recvData[0];
-      let cmd = recvData[1];      
+      let cmd = recvData[1];
       sockMgr.webSock.deleteRecvCmd(sockId);
       logger.trace(`recv cmd, sock: ${sockId}, cmd: ${cmd}`);
-      
+
       let resMsg = '';
       if (sockMgr.cmdSock.isConnect()) {
         sendTL1 = new TL1_COMMON.GetSendMsg();
         sendTL1.parse(cmd);
-        
-        if (sockMgr.cmdSock.send(sendTL1.ctag, sendTL1.toString())) {          
+
+        if (sockMgr.cmdSock.send(sendTL1.ctag, sendTL1.toString())) {
           let recvData = await sockMgr.cmdSock.recv(sendTL1.ctag, 0);
           if (recvData == undefined) {
-            recvData = await sockMgr.cmdSock.recv(sendTL1.ctag, 0);            
-          }          
+            recvData = await sockMgr.cmdSock.recv(sendTL1.ctag, 0);
+          }
           resMsg = recvData.data.recvMsg;
         } else {
           resMsg = `TL1 send fail`;
@@ -74,7 +74,7 @@ sockMgr.reqProc = async function() {
         resMsg = 'CMD socket disconnected';
         logger.error(resMsg);
       }
-   
+
       sockMgr.webSock.sendto(sockId, 'resCmd', resMsg);
     }
   } catch (exception) {

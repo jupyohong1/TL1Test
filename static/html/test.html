@@ -4,18 +4,33 @@
     <meta charset="utf-8">
     <style>
       .cmdResultView{ width: 100%; height: 100%;}
+      .reportView{ width: 100%; height: 100%;}
       .cmdBox{width:80%;}
       .sendBtn{width:10%;}
+      .cmdList{margin-bottom: 20px; position:relative; overflow:hidden;}
+      .syntax{margin-bottom: 20px; position:relative; overflow:hidden;}
+      .cmdView{margin-bottom: 20px; position:relative; overflow:hidden;}
     </style>
   </head>
   <body>
-    <form id="cmdBox">
+    <div id="syntax" class="syntax">
+      <% include ./syntax.ejs %>
+    </div>
+    <div id="commandView" class="cmdView">
+      <form id="cmdBox">
         <input id="cmdReq" class="cmdBox" type="text">
         <input id="sendBtn" class="sendBtn" type="submit" value="SEND">
-    </form>
-    <div>      
-      <textarea id="cmdResultView" class="cmdResultView" readonly rows="50"></textarea>
+      </form>
+      <div>
+        <textarea id="cmdResultView" class="cmdResultView" readonly rows="50"></textarea>
+        <h1>REPORT</h1>
+        <textarea id="reportView" class="reportView" readonly rows="30"></textarea>
+      </div>
+    </div>        
+    <div id="cmdList" class="cmdList">
+      <% include ./cmdList.ejs %>
     </div>
+    
     <script src="/socket.io/socket.io.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.js"></script>
     <script>
@@ -26,12 +41,21 @@
           $('#cmdReq').val("");
           e.preventDefault();
       });
-      socket.on('resCmd', function(msg){
-        console.log(msg);
+      socket.on('resCmd', function(msg){        
         $('#cmdResultView').append(msg+'\n');
         $('#cmdResultView').append('\n\n');
         $('#cmdResultView').scrollTop($('#cmdResultView')[0].scrollHeight);
       });
+      socket.on('report', function(msg){
+        $('#reportView').append(msg+'\n');
+        $('#reportView').append('\n\n');
+        $('#reportView').scrollTop($('#reportView')[0].scrollHeight);
+      })
+
+      function setSyntax() {
+        console.log(setSyntax)
+        $('#syntax').name = 'syntax';
+      }
     </script>
   </body>
 </html>

@@ -61,7 +61,7 @@ sock.prototype = {
        this.dataMap.delete(key);
     }
   },
-  getDataMapCount: function(key) {
+  getDataMapCount: function() {
     return this.dataMap.size;
   },
 
@@ -71,6 +71,7 @@ sock[${this.name}], ip[${this.ip}], port[${this.port}], conn[${this.isConn}]`;
   },
 
   client: null,
+  recvTL1Data: null,
 };
 
 sock.prototype.connect = function() {
@@ -80,19 +81,39 @@ sock.prototype.connect = function() {
 sock[${this.name}] connect succes, server: ${this.ip}:${this.port}`);
   });
 
-  this.client.on('data', (data) => {    
+  this.client.on('data', (data) => {
     this.isRecv = true;
     const strContent = new Buffer(data);
     const recvData = iconv.decode(strContent, 'euckr').toString();
-    const recvMsg = recvData.toString();        
-    const recvTL1Data = new TL1_COMMON.GetRecvMsg();    
-    recvTL1Data.parseHdr(recvMsg);
-    if (this.name == 'CMD') {
-      this.dataMap.set(Number(recvTL1Data.ctag), recvTL1Data);
-    } else {
-      this.dataMap.set(Number(recvTL1Data.ctag), recvMsg);
-    }    
-    logger.info(`sock[${this.name}] recv data!, ctag[${recvTL1Data.ctag}]`);
+    const recvMsg = recvData.toString();
+
+    // const recvTL1Data = new TL1_COMMON.GetRecvMsg();
+    // recvTL1Data.parseHdr(recvMsg);
+    // if (this.name == 'CMD') {
+    //   this.dataMap.set(Number(recvTL1Data.ctag), recvTL1Data);
+    // } else {
+    //   this.dataMap.set(Number(recvTL1Data.ctag), recvMsg);
+    // }
+    // logger.info(`sock[${this.name}] recv data!, ctag[${recvTL1Data.ctag}]`);
+
+    if (this.recvTL1Data == null) {
+      this.recvTL1Data = new TL1_COMMON.GetRecvMsg();
+    }
+    this.recvTL1Data.setRecvMsg(recvMsg);
+
+    if (this.recvTL1Data.isRecvComplete) {
+      this.recvTL1Data.parse();
+      if (this.name == 'CMD') {
+        this.dataMap.set(Number(this.recvTL1Data.ctag), this.recvTL1Data);
+      } else {
+        this.dataMap.set(
+          Number(this.recvTL1Data.ctag), this.recvTL1Data.recvMsg);
+      }
+      logger.info(`\
+sock[${this.name}] recv data!, ctag[${this.recvTL1Data.ctag}]`);
+
+      this.recvTL1Data = null;
+    }
   });
 
   this.client.on('timeout', () => {
@@ -142,7 +163,7 @@ sock.prototype._promise = function(ctag) {
           resolve(obj);
         }
       }
-    }, 100);
+    }, 500);
   }));
 };
 
@@ -167,7 +188,7 @@ sock.prototype.recv = async function(ctag, errCount) {
 
   if (error > 20) {
     const message = `\
-not found data, tid: ${tid}, ctag: ${ctag}, errCount: ${error}`;    
+not found data, tid: ${tid}, ctag: ${ctag}, errCount: ${error}`;
     return {result: false, data: null, msg: message};
   } else {
     await this.recv(ctag, error);

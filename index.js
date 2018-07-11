@@ -9,9 +9,16 @@ const socketMgr = require('./sock/sock_mgr');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+console.log(__dirname);
+app.set('views', __dirname + '\\static\\html');
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+app.use(express.static('static'));
+
 // ems connect
 const emsPort = [6200, 6300];
- const emsIP = '192.168.135.251';
+const emsIP = '192.168.135.251';
+// const emsIP = '192.168.135.54';
 
 
 // API
@@ -26,4 +33,5 @@ http.listen(port, function() {
 });
 
 socketMgr.createEMSSocket(emsIP, emsPort[0], emsPort[1]);
+// socketMgr.repProc();
 socketMgr.reqProc();
