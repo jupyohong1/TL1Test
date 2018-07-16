@@ -15,13 +15,13 @@ sockMgr.createEMSSocket = function(ip, cmdPort, repPort) {
   sockMgr.cmdSock = new Client('CMD', ip, cmdPort);
   // console.log(combineTL1Data);
   sockMgr.cmdSock.setCombineDataFunc = combineTL1Data;
-  logger.trace(sockMgr.cmdSock.toString());
   sockMgr.cmdSock.connect();
+  logger.trace(sockMgr.cmdSock.toString());
 
   sockMgr.repSock = new Client('REP', ip, repPort);
   sockMgr.repSock.setCombineDataFunc = combineTL1Data;
-  logger.trace(sockMgr.repSock.toString());
   sockMgr.repSock.connect();
+  logger.trace(sockMgr.repSock.toString());
 };
 
 sockMgr.createWebSocket = function(http) {
