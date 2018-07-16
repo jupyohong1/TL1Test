@@ -1,0 +1,90 @@
+body {
+	font:14px/1.8 Arial, Helvetica, sans-serif;
+}
+.frame {
+	width: 800px;
+	margin: 0 auto;
+	border: 1px solid #aaa;
+}
+.header {
+	padding:40px 10px;
+	text-align: center;
+	background: #eee;
+	margin-bottom: 20px;
+}
+.logo {
+	font-size: 2em;
+	font-weight: bold;
+	background: #5457de;
+	color: #fff;
+	display: inline-block;
+	padding: 0 8px;
+}
+.container {
+	overflow: hidden;
+	zoom: 1;
+	/* background: url('bg-menu.png') repeat-y; */
+}
+.nav {
+	float: left;
+	width: 150px;
+	background: #333;
+	color: #fff;
+    margin-right: 50px;    
+}
+.nav-list {
+	list-style: none;
+	margin: 0;
+    padding: 10px 0;
+    height: 800px;
+    overflow: auto;
+}
+.nav-item {
+    margin: 4px 0;
+    font-size: 12px;
+}
+.nav-link {
+	display: block;
+	text-decoration: none;
+	padding: 4px 10px;
+	color: #fff;
+}
+.nav-link:hover {
+	background: #5457de;
+}
+.syntax {
+	float: left;
+	width: 600px;
+}
+.command {
+	float: left;
+	width: 600px;
+}
+.report {
+    float: left;
+    width: 600px;
+}
+.footer {
+	text-align: center;
+	border-top: 1px solid #aaa;
+	margin: 20px 20px 0;
+	font-size: 12px;
+}
+.cmdBox {
+    width: 86%;
+    margin: 0px;
+}
+.butten {    
+    margin: 0px;
+}
+.cmdResultView {
+    width: 95%;
+    height: 600px;
+    font-size: 12px;
+}
+
+.reportView {
+    width: 95%;
+    height: 150px;
+    font-size: 12px;
+}

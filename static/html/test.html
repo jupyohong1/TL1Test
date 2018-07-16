@@ -1,61 +1,44 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <style>
-      .cmdResultView{ width: 100%; height: 100%;}
-      .reportView{ width: 100%; height: 100%;}
-      .cmdBox{width:80%;}
-      .sendBtn{width:10%;}
-      .cmdList{margin-bottom: 20px; position:relative; overflow:hidden;}
-      .syntax{margin-bottom: 20px; position:relative; overflow:hidden;}
-      .cmdView{margin-bottom: 20px; position:relative; overflow:hidden;}
-    </style>
-  </head>
-  <body>
-    <div id="syntax" class="syntax">
-      <% include ./syntax.ejs %>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>TL1 Test</title>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="frame">
+	<div class="container">
+		<div class="nav">
+			<ul class="nav-list">
+        <% include ./cmdList.ejs %>
+			</ul>
+		</div>
+		<!-- //nav -->
+		<div class="syntax">			        
+        <div id="syntax">Syntax</div>
     </div>
-    <div id="commandView" class="cmdView">
-      <form id="cmdBox">
+    <div class="command">      
         <input id="cmdReq" class="cmdBox" type="text">
-        <input id="sendBtn" class="sendBtn" type="submit" value="SEND">
-      </form>
-      <div>
-        <textarea id="cmdResultView" class="cmdResultView" readonly rows="50"></textarea>
-        <h1>REPORT</h1>
-        <textarea id="reportView" class="reportView" readonly rows="30"></textarea>
-      </div>
-    </div>        
-    <div id="cmdList" class="cmdList">
-      <% include ./cmdList.ejs %>
+        <input id="sendCmdBtn" class="button" type="button" value="SEND" onclick="sendCmdBtn_click();">
+        <!-- <input id="clrCmdBtn" class="button" type="button" value="CLEAR" onclick="clearCmdBtn_click();"> -->
+        <textarea id="cmdResultView" class="cmdResultView" readonly></textarea>        
     </div>
-    
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.js"></script>
-    <script>
-      var socket = io();
-      $('#cmdBox').on('submit', function(e){
-          socket.emit('reqCmd', $('#cmdReq').val());
-          $('#cmdResultView').append($('#cmdReq').val()+'\n');
-          $('#cmdReq').val("");
-          e.preventDefault();
-      });
-      socket.on('resCmd', function(msg){        
-        $('#cmdResultView').append(msg+'\n');
-        $('#cmdResultView').append('\n\n');
-        $('#cmdResultView').scrollTop($('#cmdResultView')[0].scrollHeight);
-      });
-      socket.on('report', function(msg){
-        $('#reportView').append(msg+'\n');
-        $('#reportView').append('\n\n');
-        $('#reportView').scrollTop($('#reportView')[0].scrollHeight);
-      })
+    <div class="report">
+      <a>Report</a>
+      <textarea id="reportView" class="reportView" readonly></textarea>
+    </div>
+	</div>
+	<!-- //container -->
+	<div class="footer">
+    <p>Copyright</p>
+	</div>
+	<!-- //footer -->
+</div>
+<!-- //frame -->
+</body>
 
-      function setSyntax() {
-        console.log(setSyntax)
-        $('#syntax').name = 'syntax';
-      }
-    </script>
-  </body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.js"></script>
+<script src="js/script.js"></script>
+
 </html>

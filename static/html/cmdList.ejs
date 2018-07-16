@@ -1,8 +1,8 @@
-<h1>Command List</h1>
-<ul>
-    <% cmdList.forEach(function(command) { %>        
-        <li onclick="setSyntax()">
+<% cmdList.forEach(function(command) { %>
+    <li class="nav-item">
+        <!-- <a href="" class="nav-link"> -->
+        <a class="nav-link" onclick="cmd_click('<%= command.cmd %>','<%= command.syntax %>')">
             <%= command.cmd %>
-        </li>        
-    <% }); %>
-</ul>
+        </a>
+    </li>
+<% }); %>
